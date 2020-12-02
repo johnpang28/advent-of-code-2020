@@ -1,31 +1,35 @@
 package me.jp.aoc
 
 import me.jp.aoc.Day01.combinations
+import me.jp.aoc.Day01.input
 
 fun main() {
-    val (a, b) = Day01.input.combinations(2).first { (a, b) -> a + b == 2020 }
-    val answer1 = a * b
+    val (a, b) = input.combinations(2).first { (a, b) -> a.value + b.value == 2020 }
+    val answer1 = a.value * b.value
     println(answer1) // 806656
 
-    val (x, y, z) = Day01.input.combinations(3).first { (x, y, z) -> x + y + z == 2020 }
-    val answer2 = x * y * z
+    val (x, y, z) = input.combinations(3).first { (x, y, z) -> x.value + y.value + z.value == 2020 }
+    val answer2 = x.value * y.value * z.value
     println(answer2) // 230608320
 }
 
 object Day01 {
 
-    fun List<Int>.combinations(size: Int): List<List<Int>> {
+    data class Entry(val index: Int, val value: Int)
 
-        tailrec fun go(currentSize: Int, acc: List<List<Int>>): List<List<Int>> = when (currentSize) {
+    // Using Sequence because they are lazy :)
+    fun List<Entry>.combinations(size: Int): Sequence<List<Entry>> {
+
+        tailrec fun go(currentSize: Int, acc: Sequence<List<Entry>>): Sequence<List<Entry>> = when (currentSize) {
             size -> acc
-            0 -> go(currentSize + 1, subList(0, this.size - size).map { listOf(it) })
-            else -> go(currentSize + 1, acc.flatMap { x -> subList(currentSize, this.size - size + currentSize).map { x + it } })
+            0 -> go(1, subList(0, this.size - size + 1).asSequence().map { listOf(it) })
+            else -> go(currentSize + 1, acc.flatMap { x -> subList(x.last().index + 1, this.size - size + currentSize + 1).map { x + it } })
         }
 
-        return go(0, emptyList())
+        return go(0, emptySequence())
     }
 
-    val input: List<Int> = """
+    val input: List<Entry> = """
         1778
         1845
         1813
@@ -226,5 +230,5 @@ object Day01 {
         1625
         1478
         1453
-    """.trimIndent().lines().map(String::toInt)
+    """.trimIndent().lines().mapIndexed { i, x -> Entry(i, x.toInt()) }
 }
