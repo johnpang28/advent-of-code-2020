@@ -25,13 +25,13 @@ object Day04 {
     }
 
     val validations: Map<String, Regex> = mapOf(
-        "byr" to """^19[2-9][0-9]|200[0-2]$""",
-        "iyr" to """^201[0-9]|2020$""",
-        "eyr" to """^202[0-9]|2030$""",
-        "hgt" to """^1[5-8][0-9]cm|19[0-3]cm|59in|6[0-9]in|7[0-6]in$""",
-        "hcl" to """^#[0-9a-f]{6}$""",
-        "ecl" to """^amb|blu|brn|gr[yn]|hzl|oth$""",
-        "pid" to """^[0-9]{9}$"""
+        "byr" to "^19[2-9][0-9]|200[0-2]$",
+        "iyr" to "^201[0-9]|2020$",
+        "eyr" to "^202[0-9]|2030$",
+        "hgt" to "^1[5-8][0-9]cm|19[0-3]cm|59in|6[0-9]in|7[0-6]in$",
+        "hcl" to "^#[0-9a-f]{6}$",
+        "ecl" to "^amb|blu|brn|gr[yn]|hzl|oth$",
+        "pid" to "^[0-9]{9}$"
     ).mapValues { (_, v) -> v.toRegex() }
 
     val input = """
