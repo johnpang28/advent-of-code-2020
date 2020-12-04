@@ -14,24 +14,24 @@ fun main() {
     println(answer2) // 1666768320
 }
 
-typealias Map = List<List<Boolean>>
+typealias MapOfTrees = List<List<Boolean>>
 
 object Day03 {
 
     data class Slope(val x: Int, val y: Int)
 
-    fun Map.countTrees(slope: Slope): Int {
+    fun MapOfTrees.countTrees(slope: Slope): Int {
 
         tailrec fun go(x: Int, y: Int, acc: Int): Int =
             if (y >= size) acc
-            else go(x + slope.x, y + slope.y, if (isTree(x, y)) acc + 1 else acc)
+            else go(x + slope.x, y + slope.y, if (hasTree(x, y)) acc + 1 else acc)
 
         return go(0, 0, 0)
     }
 
-    private fun Map.isTree(x: Int, y: Int): Boolean = this[y].let { row -> row[x % row.size] }
+    private fun MapOfTrees.hasTree(x: Int, y: Int): Boolean = this[y].let { row -> row[x % row.size] }
 
-    val input: Map = """
+    val input: MapOfTrees = """
         ....#...##.#.........#....#....
         #.......#...#...#.#............
         #..#..#.#.##....#.#........#...
