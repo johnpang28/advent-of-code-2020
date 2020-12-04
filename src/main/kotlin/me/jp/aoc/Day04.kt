@@ -20,7 +20,9 @@ typealias Passport = Map<String, String>
 
 object Day04 {
 
-    fun String.toPassports(): List<Passport> = groupEntries(this).map { parseRawPassport(it) }
+    fun String.toPassports(): List<Passport> = this.split("\n\n").map { rawPassport ->
+        rawPassport.split("""\s+""".toRegex()).map { it.split(':').let { (k, v) -> k to v } }.toMap()
+    }
 
     val validations: Map<String, Regex> = mapOf(
         "byr" to """^19[2-9][0-9]|200[0-2]$""",
@@ -31,17 +33,6 @@ object Day04 {
         "ecl" to """^amb|blu|brn|gr[yn]|hzl|oth$""",
         "pid" to """^[0-9]{9}$"""
     ).mapValues { (_, v) -> v.toRegex() }
-
-    private fun groupEntries(s: String): List<String> = s.lines().fold(emptyList()) { acc, n ->
-        when {
-            acc.isEmpty() -> listOf(n)
-            n.isBlank() -> acc + listOf(n)
-            else -> acc.dropLast(1) + if (acc.last().isBlank()) n else acc.last() + " " + n
-        }
-    }
-
-    private fun parseRawPassport(rawPassport: String): Passport =
-        rawPassport.split(' ').map { it.split(':').let { (k, v) -> k to v } }.toMap()
 
     val input = """
         byr:1983 iyr:2017
