@@ -23,7 +23,7 @@ object Day04 {
     fun String.toPassports(): List<Passport> = groupEntries(this).map { parseRawPassport(it) }
 
     val validations: Map<String, Regex> = mapOf(
-        "byr" to """^19[2-9][0-9]|20[0-9][0-2]$""",
+        "byr" to """^19[2-9][0-9]|200[0-2]$""",
         "iyr" to """^201[0-9]|2020$""",
         "eyr" to """^202[0-9]|2030$""",
         "hgt" to """^1[5-8][0-9]cm|19[0-3]cm|59in|6[0-9]in|7[0-6]in$""",
