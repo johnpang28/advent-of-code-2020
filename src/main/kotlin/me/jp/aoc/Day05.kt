@@ -1,9 +1,9 @@
 package me.jp.aoc
 
 import me.jp.aoc.Day05.allSeats
-import me.jp.aoc.Day05.containsId
-import me.jp.aoc.Day05.seatAt
+import me.jp.aoc.Day05.containsIds
 import me.jp.aoc.Day05.input
+import me.jp.aoc.Day05.seatAt
 
 fun main() {
     val seatsWithBoardingPass = input.lines().map { seatAt(it) }
@@ -12,7 +12,7 @@ fun main() {
     println(answer1) // 970
 
     val answer2 = (allSeats - seatsWithBoardingPass).find { seat ->
-        seatsWithBoardingPass.containsId(seat.id() - 1) && seatsWithBoardingPass.containsId(seat.id() + 1)
+        seatsWithBoardingPass.containsIds(seat.id() - 1, seat.id() + 1)
     }?.id()
     println(answer2) // 587
 }
@@ -25,7 +25,7 @@ object Day05 {
 
     val allSeats: List<Seat> = (1..126).flatMap { r -> (0..7).map { c -> Seat(r, c) } }
 
-    fun List<Seat>.containsId(id: Int): Boolean = find { it.id() == id } != null
+    fun List<Seat>.containsIds(vararg ids: Int): Boolean = map { it.id() }.containsAll(ids.asList())
 
     fun seatAt(code: String): Seat {
         val row = doSteps(0..127, code.take(7)).first()
