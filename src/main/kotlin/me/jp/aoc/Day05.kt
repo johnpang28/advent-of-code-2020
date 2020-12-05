@@ -8,24 +8,24 @@ import me.jp.aoc.Day05.seatAt
 fun main() {
     val seatsWithBoardingPass = input.lines().map { seatAt(it) }
 
-    val answer1 = seatsWithBoardingPass.map { it.id() }.maxOrNull()
+    val answer1 = seatsWithBoardingPass.map { it.id }.maxOrNull()
     println(answer1) // 970
 
     val answer2 = (allSeats - seatsWithBoardingPass).find { seat ->
-        seatsWithBoardingPass.containsIds(seat.id() - 1, seat.id() + 1)
-    }?.id()
+        seatsWithBoardingPass.containsIds(seat.id - 1, seat.id + 1)
+    }?.id
     println(answer2) // 587
 }
 
 object Day05 {
 
     data class Seat(val row: Int, val col: Int) {
-        fun id(): Int = row * 8 + col
+        val id = row * 8 + col
     }
 
     val allSeats: List<Seat> = (1..126).flatMap { r -> (0..7).map { c -> Seat(r, c) } }
 
-    fun List<Seat>.containsIds(vararg ids: Int): Boolean = map { it.id() }.containsAll(ids.asList())
+    fun List<Seat>.containsIds(vararg ids: Int): Boolean = map { it.id }.containsAll(ids.asList())
 
     fun seatAt(code: String): Seat {
         val row = doSteps(0..127, code.take(7))
