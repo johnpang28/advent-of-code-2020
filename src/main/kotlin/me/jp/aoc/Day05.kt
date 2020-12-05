@@ -42,13 +42,10 @@ object Day05 {
     }
 
     private fun <T> List<T>.doStep(step: Char) = when (step) {
-        'F', 'L' -> lowerHalf()
-        'B', 'R' -> upperHalf()
+        'F', 'L' -> take(size / 2)
+        'B', 'R' -> drop(size / 2)
         else -> throw RuntimeException("Invalid step $step")
     }
-
-    private fun <T> List<T>.upperHalf() = drop(size / 2)
-    private fun <T> List<T>.lowerHalf() = take(size / 2)
 
     val input = """
         BBBFBFFRLL
