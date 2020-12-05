@@ -27,11 +27,10 @@ object Day05 {
 
     fun List<Seat>.containsIds(vararg ids: Int): Boolean = map { it.id }.containsAll(ids.asList())
 
-    fun seatAt(code: String): Seat {
-        val row = doSteps(0..127, code.take(7))
-        val col = doSteps(0..7, code.takeLast(3))
-        return Seat(row, col)
-    }
+    fun seatAt(code: String): Seat = Seat(
+        row = doSteps(0..127, code.take(7)),
+        col = doSteps(0..7, code.takeLast(3))
+    )
 
     private fun doSteps(range: IntRange, steps: String): Int {
 
@@ -39,7 +38,7 @@ object Day05 {
             if (remainingSteps.isEmpty()) acc
             else go(acc.doStep(remainingSteps.first()), remainingSteps.drop(1))
 
-        return go(range.toList(), steps).first()
+        return go(range.toList(), steps).single()
     }
 
     private fun <T> List<T>.doStep(step: Char) = when (step) {
@@ -48,8 +47,8 @@ object Day05 {
         else -> throw RuntimeException("Invalid step $step")
     }
 
-    private fun <T> List<T>.upperHalf() = drop((count() / 2))
-    private fun <T> List<T>.lowerHalf() = take((count() / 2))
+    private fun <T> List<T>.upperHalf() = drop(size / 2)
+    private fun <T> List<T>.lowerHalf() = take(size / 2)
 
     val input = """
         BBBFBFFRLL
