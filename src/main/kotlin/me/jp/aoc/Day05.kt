@@ -28,28 +28,28 @@ object Day05 {
     fun List<Seat>.containsIds(vararg ids: Int): Boolean = map { it.id() }.containsAll(ids.asList())
 
     fun seatAt(code: String): Seat {
-        val row = doSteps(0..127, code.take(7)).first()
-        val col = doSteps(0..7, code.takeLast(3)).first()
+        val row = doSteps(0..127, code.take(7))
+        val col = doSteps(0..7, code.takeLast(3))
         return Seat(row, col)
     }
 
-    private fun doSteps(range: IntRange, steps: String): List<Int> {
+    private fun doSteps(range: IntRange, steps: String): Int {
 
         tailrec fun go(acc: List<Int>, remainingSteps: String): List<Int> =
             if (remainingSteps.isEmpty()) acc
             else go(acc.doStep(remainingSteps.first()), remainingSteps.drop(1))
 
-        return go(range.toList(), steps)
+        return go(range.toList(), steps).first()
     }
 
-    private fun <T> List<T>.doStep(step: Char): List<T> = when (step) {
+    private fun <T> List<T>.doStep(step: Char) = when (step) {
         'F', 'L' -> lowerHalf()
         'B', 'R' -> upperHalf()
         else -> throw RuntimeException("Invalid step $step")
     }
 
-    private fun <T> List<T>.upperHalf(): List<T> = drop((count() / 2))
-    private fun <T> List<T>.lowerHalf(): List<T> = take((count() / 2))
+    private fun <T> List<T>.upperHalf() = drop((count() / 2))
+    private fun <T> List<T>.lowerHalf() = take((count() / 2))
 
     val input = """
         BBBFBFFRLL
