@@ -16,24 +16,10 @@ fun main() {
 object Day05 {
 
     fun seatId(code: String): Int {
-        val row = doSteps(0..127, code.take(7))
-        val col = doSteps(0..7, code.takeLast(3))
+        // The clue is in the title: "Day 5: BINARY Boarding" ☺
+        val row = code.take(7).fold("") { acc, n -> if (n == 'F') acc + 0 else acc + 1 }.toInt(2)
+        val col = code.takeLast(3).fold("") { acc, n -> if (n == 'L') acc + 0 else acc + 1 }.toInt(2)
         return row * 8 + col
-    }
-
-    private fun doSteps(range: IntRange, steps: String): Int {
-
-        tailrec fun go(acc: List<Int>, remainingSteps: String): List<Int> =
-            if (remainingSteps.isEmpty()) acc
-            else go(acc.doStep(remainingSteps.first()), remainingSteps.drop(1))
-
-        return go(range.toList(), steps).single()
-    }
-
-    private fun <T> List<T>.doStep(step: Char) = when (step) {
-        'F', 'L' -> take(size / 2)
-        'B', 'R' -> drop(size / 2)
-        else -> throw RuntimeException("Invalid step $step")
     }
 
     val input = """
