@@ -1,36 +1,25 @@
 package me.jp.aoc
 
-import me.jp.aoc.Day05.allSeats
-import me.jp.aoc.Day05.containsIds
 import me.jp.aoc.Day05.input
-import me.jp.aoc.Day05.seatAt
+import me.jp.aoc.Day05.seatId
 
 fun main() {
-    val seatsWithBoardingPass = input.lines().map { seatAt(it) }
+    val seatIds = input.lines().map { seatId(it) }
 
-    val answer1 = seatsWithBoardingPass.map { it.id }.maxOrNull()
+    val answer1 = seatIds.maxOrNull()
     println(answer1) // 970
 
-    val answer2 = (allSeats - seatsWithBoardingPass).find { seat ->
-        seatsWithBoardingPass.containsIds(seat.id - 1, seat.id + 1)
-    }?.id
+    val answer2 = ((8..(127 * 8)) - seatIds).find { id -> seatIds.containsAll(listOf(id - 1, id + 1)) }
     println(answer2) // 587
 }
 
 object Day05 {
 
-    data class Seat(val row: Int, val col: Int) {
-        val id = row * 8 + col
+    fun seatId(code: String): Int {
+        val row = doSteps(0..127, code.take(7))
+        val col = doSteps(0..7, code.takeLast(3))
+        return row * 8 + col
     }
-
-    val allSeats: List<Seat> = (1..126).flatMap { r -> (0..7).map { c -> Seat(r, c) } }
-
-    fun List<Seat>.containsIds(vararg ids: Int): Boolean = map { it.id }.containsAll(ids.asList())
-
-    fun seatAt(code: String): Seat = Seat(
-        row = doSteps(0..127, code.take(7)),
-        col = doSteps(0..7, code.takeLast(3))
-    )
 
     private fun doSteps(range: IntRange, steps: String): Int {
 
