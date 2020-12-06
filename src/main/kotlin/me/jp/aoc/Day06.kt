@@ -8,8 +8,7 @@ fun main() {
     val answer1 = groups.map { it.fold(emptySet<Char>()) { acc, n -> if (n == '\n') acc else acc + n } }.fold(0) { acc, n -> acc + n.size }
     println(answer1) // 6170
 
-    val answer2 = groups.map { g -> g.groupBy { it }.filter { it.key != '\n' }.filter { (_, v) -> v.size == g.lines().size } }
-        .fold(0) { acc, n -> acc + n.size }
+    val answer2 = groups.map { g -> g.groupBy { it }.filter { (k, v) -> k != '\n' && v.size == g.lines().size } }.fold(0) { acc, n -> acc + n.size }
     println(answer2) // 2947
 }
 
