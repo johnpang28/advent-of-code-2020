@@ -17,33 +17,33 @@ fun main() {
 
 object Day07 {
 
-    fun canCarry(allBags: Map<String, Map<String, Int>>, colour: String): Set<String> {
+    fun canCarry(allBags: Map<String, Map<String, Int>>, colour: String): List<String> {
 
-        fun go(acc: Set<String>, currentColour: String): Set<String> {
-            val matches = allBags.entries.filter { (_, v) -> v[currentColour] != null }
-            return if (matches.isEmpty()) acc
-            else matches.flatMap { (k, _) -> go(acc + k, k) }.toSet()
-        }
+        fun go(acc: List<String>, currentColour: String): List<String> =
+            allBags.entries.filter { (_, v) -> v[currentColour] != null }.let { bags ->
+                if (bags.isEmpty()) acc
+                else bags.flatMap { (k, _) -> go(acc + k, k) }
+            }
 
-        return go(emptySet(), colour)
+        return go(emptyList(), colour).distinct()
     }
 
     fun bagCount(allBags: Map<String, Map<String, Int>>, colour: String): Int {
 
-        fun go(acc: List<Pair<String, Int>>, currentColour: String): List<Pair<String, Int>> {
-            val bags = allBags.getOrDefault(currentColour, emptyMap())
-            return if (bags.isEmpty()) acc
-            else {
-                val currentColourCount = acc.last().second
-                acc + bags.entries.flatMap { (k, v) -> go(listOf(k to currentColourCount * v), k)}
+        fun go(acc: List<Pair<String, Int>>, currentColour: String): List<Pair<String, Int>> =
+            allBags.getOrDefault(currentColour, emptyMap()).let { bags ->
+                if (bags.isEmpty()) acc
+                else {
+                    val currentColourCount = acc.last().second
+                    acc + bags.entries.flatMap { (k, v) -> go(listOf(k to currentColourCount * v), k) }
+                }
             }
-        }
 
         return go(listOf(colour to 1), colour).fold(0) { acc, n -> acc + n.second } - 1
     }
 
     fun parse(s: String): Pair<String, Map<String, Int>> {
-        val matchResults = """([0-9]?)(?:\s?([a-z\s]+?))\sbags?""".toRegex().findAll(s).toList()
+        val matchResults = """([0-9]?)(?:\s?([a-z\s]+?))\sbags?""".toRegex().findAll(s).toList() // hmmm... better regex perhaps?
         val (_, outColour) = matchResults[0].destructured
 
         val contains = matchResults.drop(1).fold(emptyList<Pair<String, Int>>()) { acc, n ->
