@@ -4,32 +4,32 @@ import me.jp.aoc.Day01.combinations
 import me.jp.aoc.Day01.input
 
 fun main() {
-    val (a, b) = input.combinations(2).first { (a, b) -> a.value + b.value == 2020 }
-    val answer1 = a.value * b.value
+    val (a, b) = input.combinations(2).first { (a, b) -> a + b == 2020 }
+    val answer1 = a * b
     println(answer1) // 806656
 
-    val (x, y, z) = input.combinations(3).first { (x, y, z) -> x.value + y.value + z.value == 2020 }
-    val answer2 = x.value * y.value * z.value
+
+    val (x, y, z) = input.combinations(3).first { (x, y, z) -> x + y + z == 2020 }
+    val answer2 = x * y * z
     println(answer2) // 230608320
 }
 
 object Day01 {
 
-    data class Entry(val index: Int, val value: Int)
+    fun <T> List<T>.combinations(size: Int): Sequence<List<T>> {
 
-    // Using Sequence because they are lazy :)
-    fun List<Entry>.combinations(size: Int): Sequence<List<Entry>> {
+        val indexed = withIndex().toList()
 
-        tailrec fun go(currentSize: Int, acc: Sequence<List<Entry>>): Sequence<List<Entry>> = when (currentSize) {
+        tailrec fun go(currentSize: Int, acc: Sequence<List<IndexedValue<T>>>): Sequence<List<IndexedValue<T>>> = when (currentSize) {
             size -> acc
-            0 -> go(1, subList(0, this.size - size + 1).asSequence().map { listOf(it) })
-            else -> go(currentSize + 1, acc.flatMap { x -> subList(x.last().index + 1, this.size - size + currentSize + 1).map { x + it } })
+            0 -> go(1, indexed.subList(0, this.size - size + 1).asSequence().map { listOf(it) })
+            else -> go(currentSize + 1, acc.flatMap { x -> indexed.subList(x.last().index + 1, this.size - size + currentSize + 1).map { x + it } })
         }
 
-        return go(0, emptySequence())
+        return go(0, emptySequence()).map { it.map { indexedValue ->  indexedValue.value } }
     }
 
-    val input: List<Entry> = """
+    val input: List<Int> = """
         1778
         1845
         1813
@@ -230,5 +230,5 @@ object Day01 {
         1625
         1478
         1453
-    """.trimIndent().lines().mapIndexed { i, x -> Entry(i, x.toInt()) }
+    """.trimIndent().lines().map { it.toInt() }
 }
