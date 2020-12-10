@@ -18,7 +18,7 @@ object Day10 {
 
     fun List<Int>.arrangements(): Long {
 
-        fun go(acc: Map<Int, Long>, remaining: List<Int>): Map<Int, Long> =
+        tailrec fun go(acc: Map<Int, Long>, remaining: List<Int>): Map<Int, Long> =
             if (remaining.isEmpty()) acc
             else {
                 val x = remaining.last()
