@@ -6,8 +6,9 @@ import me.jp.aoc.Day10.input
 fun main() {
     val joltages: List<Int> = input.sorted().let { listOf(0) + it + (it.last() + 3) }
 
-    val joltageGroups = joltages.zipWithNext().map { (a, b) -> b - a }.groupBy { it }
-    val answer1 = joltageGroups.getValue(1).size * joltageGroups.getValue(3).size
+    val answer1 = joltages.zipWithNext().map { (a, b) -> b - a }.groupBy { it }.let {
+        it.getValue(1).size * it.getValue(3).size
+    }
     println(answer1) // 1690
 
     val answer2 = joltages.arrangements()
