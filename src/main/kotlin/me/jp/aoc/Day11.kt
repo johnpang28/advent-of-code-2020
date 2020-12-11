@@ -4,9 +4,9 @@ import me.jp.aoc.Day11.Position
 import me.jp.aoc.Day11.countOccupied
 import me.jp.aoc.Day11.fillToEquilibrium
 import me.jp.aoc.Day11.input
+import me.jp.aoc.Day11.toSeatMap
 import me.jp.aoc.Day11.updateSeat1
 import me.jp.aoc.Day11.updateSeat2
-import me.jp.aoc.Day11.toSeatMap
 
 
 fun main() {
@@ -15,7 +15,9 @@ fun main() {
     val answer1 = seatMap.fillToEquilibrium { seats, pos -> seats.updateSeat1(pos) }.countOccupied()
     println(answer1) // 2289
 
-    val answer2 = seatMap.fillToEquilibrium { seats, pos -> seats.updateSeat2(pos) }.countOccupied()
+    val xMax = seatMap.map { (k, _) -> k.x }.sorted().last()
+    val yMax = seatMap.map { (k, _) -> k.y }.sorted().last()
+    val answer2 = seatMap.fillToEquilibrium { seats, pos -> seats.updateSeat2(pos, xMax, yMax) }.countOccupied()
     println(answer2) // 2059
 }
 
@@ -42,10 +44,7 @@ object Day11 {
         return next?.let { if (this.getValue(pos) != it) it else null }
     }
 
-    fun SeatMap.updateSeat2(position: Position): Boolean? {
-        val xMax = map { (k, _) -> k.x }.sorted().last()
-        val yMax = map { (k, _) -> k.y }.sorted().last()
-
+    fun SeatMap.updateSeat2(position: Position, xMax: Int, yMax: Int): Boolean? {
         fun Position.n() = Position(x, y - 1)
         fun Position.s() = Position(x, y + 1)
         fun Position.e() = Position(x + 1, y)
@@ -56,9 +55,9 @@ object Day11 {
         fun Position.nw() = Position(x - 1, y - 1)
         fun Position.isOutOfBounds(): Boolean = !(x in 0..xMax && y in 0..yMax)
 
-        fun isAdjacentOccupied(pos: Position, supplyNext: (Position) -> Position): Boolean {
-            tailrec fun go(p: Position): Boolean = if (p.isOutOfBounds()) false else this[p] ?: go(supplyNext(p))
-            return go(supplyNext(pos))
+        fun isAdjacentOccupied(pos: Position, next: (Position) -> Position): Boolean {
+            tailrec fun go(p: Position): Boolean = if (p.isOutOfBounds()) false else this[p] ?: go(next(p))
+            return go(next(pos))
         }
 
         val occupiedCount = listOf(Position::n, Position::s, Position::e, Position::w, Position::ne, Position::se, Position::sw, Position::nw)
@@ -77,7 +76,6 @@ object Day11 {
 
         tailrec fun go(currentSeats: SeatMap): SeatMap {
             val updated = currentSeats.mapNotNull { (k, _) -> updateSeat(currentSeats, k)?.let { k to it } }
-                .also { println("**** updated ${it.size} seats") }
             return if (updated.isEmpty()) currentSeats else go(currentSeats + updated)
         }
 
