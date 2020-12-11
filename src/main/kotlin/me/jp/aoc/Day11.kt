@@ -5,19 +5,19 @@ import me.jp.aoc.Day11.countOccupied
 import me.jp.aoc.Day11.fillToEquilibrium
 import me.jp.aoc.Day11.input
 import me.jp.aoc.Day11.toSeatMap
-import me.jp.aoc.Day11.updateSeat1
-import me.jp.aoc.Day11.updateSeat2
+import me.jp.aoc.Day11.updateOccupied1
+import me.jp.aoc.Day11.updateOccupied2
 
 
 fun main() {
     val seatMap = input.toSeatMap()
 
-    val answer1 = seatMap.fillToEquilibrium { seats, pos -> seats.updateSeat1(pos) }.countOccupied()
+    val answer1 = seatMap.fillToEquilibrium { seats, pos -> seats.updateOccupied1(pos) }.countOccupied()
     println(answer1) // 2289
 
     val xMax = seatMap.map { (k, _) -> k.x }.sorted().last()
     val yMax = seatMap.map { (k, _) -> k.y }.sorted().last()
-    val answer2 = seatMap.fillToEquilibrium { seats, pos -> seats.updateSeat2(pos, xMax, yMax) }.countOccupied()
+    val answer2 = seatMap.fillToEquilibrium { seats, pos -> seats.updateOccupied2(pos, xMax, yMax) }.countOccupied()
     println(answer2) // 2059
 }
 
@@ -26,51 +26,6 @@ typealias SeatMap = Map<Position, Boolean>
 object Day11 {
 
     data class Position(val x: Int, val y: Int)
-
-    fun SeatMap.updateSeat1(pos: Position): Boolean? {
-
-        fun Position.adjacents(): List<Position> =
-            (this.x - 1..this.x + 1).flatMap { x -> (this.y - 1..this.y + 1).map { y -> Position(x, y) } }
-                .filterNot { it == this }
-
-        val adjacents = pos.adjacents().mapNotNull { this[it] }
-
-        val next = when {
-            adjacents.all { !it } -> true
-            adjacents.count { it } >= 4 -> false
-            else -> null
-        }
-
-        return next?.let { if (this.getValue(pos) != it) it else null }
-    }
-
-    fun SeatMap.updateSeat2(position: Position, xMax: Int, yMax: Int): Boolean? {
-        fun Position.n() = Position(x, y - 1)
-        fun Position.s() = Position(x, y + 1)
-        fun Position.e() = Position(x + 1, y)
-        fun Position.w() = Position(x - 1, y)
-        fun Position.ne() = Position(x + 1, y - 1)
-        fun Position.se() = Position(x + 1, y + 1)
-        fun Position.sw() = Position(x - 1, y + 1)
-        fun Position.nw() = Position(x - 1, y - 1)
-        fun Position.isOutOfBounds(): Boolean = !(x in 0..xMax && y in 0..yMax)
-
-        fun isAdjacentOccupied(pos: Position, next: (Position) -> Position): Boolean {
-            tailrec fun go(p: Position): Boolean = if (p.isOutOfBounds()) false else this[p] ?: go(next(p))
-            return go(next(pos))
-        }
-
-        val occupiedCount = listOf(Position::n, Position::s, Position::e, Position::w, Position::ne, Position::se, Position::sw, Position::nw)
-            .map { isAdjacentOccupied(position, it) }.count { it }
-
-        val next = when {
-            occupiedCount == 0 -> true
-            occupiedCount >= 5 -> false
-            else -> null
-        }
-
-        return next?.let { if (this.getValue(position) != it) it else null }
-    }
 
     fun SeatMap.fillToEquilibrium(updateSeat: (SeatMap, Position) -> Boolean?): SeatMap {
 
@@ -83,6 +38,47 @@ object Day11 {
     }
 
     fun SeatMap.countOccupied(): Int = count { (_, v) -> v }
+
+    fun SeatMap.updateOccupied1(pos: Position): Boolean? {
+
+        fun Position.adjacents(): List<Position> =
+            (this.x - 1..this.x + 1).flatMap { x -> (this.y - 1..this.y + 1).map { y -> Position(x, y) } }
+                .filterNot { it == this }
+
+        val occupiedCount = pos.adjacents().mapNotNull { this[it] }.count { it }
+
+        return updateOccupied(pos, nextState(occupiedCount, 4))
+    }
+
+    fun SeatMap.updateOccupied2(position: Position, xMax: Int, yMax: Int): Boolean? {
+        fun Position.isOutOfBounds(): Boolean = !(x in 0..xMax && y in 0..yMax)
+
+        fun isAdjacentOccupied(pos: Position, next: (Position) -> Position): Boolean {
+            tailrec fun go(p: Position): Boolean = if (p.isOutOfBounds()) false else this[p] ?: go(next(p))
+            return go(next(pos))
+        }
+
+        val occupiedCount = listOf<(Position) -> Position>(
+            { p -> Position(p.x, p.y - 1) },
+            { p -> Position(p.x, p.y + 1) },
+            { p -> Position(p.x + 1, p.y) },
+            { p -> Position(p.x - 1, p.y) },
+            { p -> Position(p.x + 1, p.y - 1) },
+            { p -> Position(p.x + 1, p.y + 1) },
+            { p -> Position(p.x - 1, p.y + 1) },
+            { p -> Position(p.x - 1, p.y - 1) }
+        ).map { isAdjacentOccupied(position, it) }.count { it }
+
+        return updateOccupied(position, nextState(occupiedCount, 5))
+    }
+
+    private fun SeatMap.updateOccupied(pos: Position, next: Boolean?): Boolean? = next?.let { if (getValue(pos) != it) it else null }
+
+    private fun nextState(occupiedCount: Int, maxNeighbours: Int): Boolean? = when {
+        occupiedCount == 0 -> true
+        occupiedCount >= maxNeighbours -> false
+        else -> null
+    }
 
     fun String.toSeatMap(): SeatMap =
         lines().flatMapIndexed { y, line -> line.mapIndexedNotNull { x, c -> if (c == 'L') Position(x, y) to false else null } }.toMap()
