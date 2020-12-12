@@ -2,7 +2,7 @@ package me.jp.aoc
 
 import me.jp.aoc.Day11.Position
 import me.jp.aoc.Day11.countOccupied
-import me.jp.aoc.Day11.fillToEquilibrium
+import me.jp.aoc.Day11.toEquilibrium
 import me.jp.aoc.Day11.input
 import me.jp.aoc.Day11.toSeatMap
 import me.jp.aoc.Day11.updateOccupied1
@@ -11,13 +11,13 @@ import me.jp.aoc.Day11.updateOccupied2
 
 fun main() {
     val seatMap = input.toSeatMap()
+    val xMax = input.lines()[0].length
+    val yMax = input.lines().size - 1
 
-    val answer1 = seatMap.fillToEquilibrium { seats, pos -> seats.updateOccupied1(pos) }.countOccupied()
+    val answer1 = seatMap.toEquilibrium { seats, pos -> seats.updateOccupied1(pos) }.countOccupied()
     println(answer1) // 2289
 
-    val xMax = seatMap.map { (k, _) -> k.x }.sorted().last()
-    val yMax = seatMap.map { (k, _) -> k.y }.sorted().last()
-    val answer2 = seatMap.fillToEquilibrium { seats, pos -> seats.updateOccupied2(pos, xMax, yMax) }.countOccupied()
+    val answer2 = seatMap.toEquilibrium { seats, pos -> seats.updateOccupied2(pos, xMax, yMax) }.countOccupied()
     println(answer2) // 2059
 }
 
@@ -27,7 +27,7 @@ object Day11 {
 
     data class Position(val x: Int, val y: Int)
 
-    fun SeatMap.fillToEquilibrium(updateSeat: (SeatMap, Position) -> Boolean?): SeatMap {
+    fun SeatMap.toEquilibrium(updateSeat: (SeatMap, Position) -> Boolean?): SeatMap {
 
         tailrec fun go(currentSeats: SeatMap): SeatMap {
             val updated = currentSeats.mapNotNull { (k, _) -> updateSeat(currentSeats, k)?.let { k to it } }
@@ -59,10 +59,10 @@ object Day11 {
         }
 
         val occupiedCount = listOf<(Position) -> Position>(
-            { p -> Position(p.x, p.y - 1) },
-            { p -> Position(p.x, p.y + 1) },
-            { p -> Position(p.x + 1, p.y) },
-            { p -> Position(p.x - 1, p.y) },
+            { p -> p.copy(y = p.y - 1) },
+            { p -> p.copy(y = p.y + 1) },
+            { p -> p.copy(x = p.x + 1) },
+            { p -> p.copy(x = p.x - 1) },
             { p -> Position(p.x + 1, p.y - 1) },
             { p -> Position(p.x + 1, p.y + 1) },
             { p -> Position(p.x - 1, p.y + 1) },
