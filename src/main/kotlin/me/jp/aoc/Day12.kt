@@ -50,14 +50,14 @@ object Day12 {
         else -> throw RuntimeException("Bad instruction $instruction")
     }
 
-    private fun WayPoint.r(degrees: Int): WayPoint = when(degrees % 360) {
+    private fun WayPoint.r(degrees: Int): WayPoint = when(degrees) {
         90 -> WayPoint(y, x * -1)
         180 -> WayPoint(x * -1, y * -1)
         270 -> WayPoint(y * -1, x)
         else -> throw RuntimeException("Bad degrees $degrees")
     }
 
-    private fun WayPoint.l(degrees: Int): WayPoint = when(degrees % 360) {
+    private fun WayPoint.l(degrees: Int): WayPoint = when(degrees) {
         90 -> WayPoint(y * -1, x)
         180 -> WayPoint(x * -1, y * -1)
         270 -> WayPoint(y, x * -1)
