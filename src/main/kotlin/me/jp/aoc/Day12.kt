@@ -7,10 +7,10 @@ import me.jp.aoc.Day12.input
 import kotlin.math.absoluteValue
 
 fun main() {
-    input.fold(Ship()) { acc, n -> doInstruction(acc, n) }.let { it.x.absoluteValue + it.y.absoluteValue }
+    input.fold(Ship()) { acc, n -> acc.doInstruction(n) }.let { it.x.absoluteValue + it.y.absoluteValue }
         .also { println("answer1=$it") } // 2057
 
-    input.fold(Ship2()) { acc, n -> doInstruction(acc, n) }.let { it.x.absoluteValue + it.y.absoluteValue }
+    input.fold(Ship2()) { acc, n -> acc.doInstruction(n) }.let { it.x.absoluteValue + it.y.absoluteValue }
         .also { println("answer2=$it") } // 71504
 }
 
@@ -20,14 +20,14 @@ object Day12 {
     data class Ship2(val x: Int = 0, val y: Int = 0, val wayPoint: WayPoint = WayPoint(10, 1))
     data class WayPoint(val x: Int, val y: Int)
 
-    fun doInstruction(ship: Ship, instruction: Instruction): Ship = when (instruction.action) {
-        'N' -> ship.copy(y = ship.y + instruction.value)
-        'S' -> ship.copy(y = ship.y - instruction.value)
-        'E' -> ship.copy(x = ship.x + instruction.value)
-        'W' -> ship.copy(x = ship.x - instruction.value)
-        'R' -> ship.copy(bearing = ship.bearing + instruction.value)
-        'L' -> ship.copy(bearing = ship.bearing - instruction.value)
-        'F' -> doInstruction(ship, convertF(ship.bearing, instruction.value))
+    fun Ship.doInstruction(instruction: Instruction): Ship = when (instruction.action) {
+        'N' -> copy(y = y + instruction.value)
+        'S' -> copy(y = y - instruction.value)
+        'E' -> copy(x = x + instruction.value)
+        'W' -> copy(x = x - instruction.value)
+        'R' -> copy(bearing = bearing + instruction.value)
+        'L' -> copy(bearing = bearing - instruction.value)
+        'F' -> doInstruction(convertF(bearing, instruction.value))
         else -> throw RuntimeException("Bad instruction $instruction")
     }
 
@@ -39,14 +39,14 @@ object Day12 {
         else -> throw RuntimeException("Bad bearing $bearing")
     }
 
-    fun doInstruction(ship: Ship2, instruction: Instruction): Ship2 = when (instruction.action) {
-        'N' -> ship.copy(wayPoint = ship.wayPoint.copy(y = ship.wayPoint.y + instruction.value))
-        'S' -> ship.copy(wayPoint = ship.wayPoint.copy(y = ship.wayPoint.y - instruction.value))
-        'E' -> ship.copy(wayPoint = ship.wayPoint.copy(x = ship.wayPoint.x + instruction.value))
-        'W' -> ship.copy(wayPoint = ship.wayPoint.copy(x = ship.wayPoint.x - instruction.value))
-        'R' -> ship.copy(wayPoint = ship.wayPoint.r(instruction.value))
-        'L' -> ship.copy(wayPoint = ship.wayPoint.l(instruction.value))
-        'F' -> ship.copy(x = ship.x + ship.wayPoint.x * instruction.value, y = ship.y + ship.wayPoint.y * instruction.value)
+    fun Ship2.doInstruction(instruction: Instruction): Ship2 = when (instruction.action) {
+        'N' -> copy(wayPoint = wayPoint.copy(y = wayPoint.y + instruction.value))
+        'S' -> copy(wayPoint = wayPoint.copy(y = wayPoint.y - instruction.value))
+        'E' -> copy(wayPoint = wayPoint.copy(x = wayPoint.x + instruction.value))
+        'W' -> copy(wayPoint = wayPoint.copy(x = wayPoint.x - instruction.value))
+        'R' -> copy(wayPoint = wayPoint.r(instruction.value))
+        'L' -> copy(wayPoint = wayPoint.l(instruction.value))
+        'F' -> copy(x = x + wayPoint.x * instruction.value, y = y + wayPoint.y * instruction.value)
         else -> throw RuntimeException("Bad instruction $instruction")
     }
 
