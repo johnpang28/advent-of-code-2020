@@ -36,7 +36,7 @@ object Day12 {
         90 -> Instruction('E', value)
         180 -> Instruction('S', value)
         270 -> Instruction('W', value)
-        else -> throw RuntimeException("Unexpected bearing $bearing")
+        else -> throw RuntimeException("Bad bearing $bearing")
     }
 
     fun doInstruction(ship: Ship2, instruction: Instruction): Ship2 = when (instruction.action) {
