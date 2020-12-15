@@ -20,7 +20,7 @@ object Day15 {
     class Game(
         var lastNumber: Int,
         private var turn: Int,
-        private val numberToTurnMap: MutableMap<Int, Int>)
+        private val previous: MutableMap<Int, Int>)
     {
 
         fun takeTurn(to: Int) {
@@ -28,10 +28,9 @@ object Day15 {
         }
 
         private fun next() {
-            val nextNumber = numberToTurnMap[lastNumber]?.let { previousTurn -> turn - previousTurn } ?: 0
-            numberToTurnMap[lastNumber] = turn
+            val nextNumber = previous[lastNumber]?.let { previousTurn -> turn - previousTurn } ?: 0
+            previous[lastNumber] = turn++
             lastNumber = nextNumber
-            turn++
         }
     }
 
