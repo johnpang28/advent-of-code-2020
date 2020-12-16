@@ -20,9 +20,8 @@ object Day15 {
     class Game(
         var lastNumber: Int,
         private var turn: Int,
-        private val previous: MutableMap<Int, Int>)
-    {
-
+        private val previous: MutableMap<Int, Int>
+    ) {
         fun takeTurn(to: Int) {
             while (to > turn) next()
         }
