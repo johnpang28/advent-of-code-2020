@@ -8,7 +8,7 @@ import me.jp.aoc.Day18.toRpn
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class Day18Test {
+class Day18Test {
 
     @Test
     fun `should get RPN expression for part 1`() {
