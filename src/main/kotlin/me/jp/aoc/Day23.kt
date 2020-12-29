@@ -15,7 +15,9 @@ fun main() {
 
     input.map { it.toString().toInt() }.fillTo(1_000_000).let { cups ->
         val circle = Circle(cups).apply { repeat(10_000_000) { move() } }
-        val answer2 = circle.nextCupAfter(1) * circle.nextCupAfter(circle.nextCupAfter(1)).toLong()
+        val nextCup1 = circle.nextCupAfter(1)
+        val nextCup2 = circle.nextCupAfter(nextCup1)
+        val answer2 = nextCup1 * nextCup2.toLong()
         println(answer2) // 902208073192
     }
 }
